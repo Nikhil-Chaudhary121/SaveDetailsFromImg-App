@@ -1,6 +1,7 @@
 import {Request , Response} from "express"
 import pool from '../db.ts'
 import Shop from "../types/Shop.ts"
+import shopSchema from "../schemas/shopSchema.ts"
 
 
 const getAllShops = async(req : Request , res : Response) => {
@@ -14,4 +15,26 @@ const getAllShops = async(req : Request , res : Response) => {
     }
 }
 
-export {getAllShops}
+const createShop = async (req: Request, res: Response) => {
+    try {
+        const parsed = shopSchema.safeParse(req.body)
+        if (!parsed.success) {
+            return res.status(400).json({ error: "Invalid Inputs" })
+        }
+
+        const { name, category, latitude, longitude, photo_url } = parsed.data
+
+        const result = await pool.query<Shop>(
+            `INSERT INTO shops (name, category, latitude, longitude, photo_url)
+             VALUES ($1, $2, $3, $4, $5)
+             RETURNING *`,
+            [name, category ?? null, latitude, longitude, photo_url ?? null]
+        )
+
+        res.status(201).json(result.rows[0])
+    } catch (error) {
+        console.log("Error in creating Shop Controller:", error)
+        res.status(500).json({ error: "Error in Adding Shop" })
+    }
+}
+export {getAllShops , createShop}
