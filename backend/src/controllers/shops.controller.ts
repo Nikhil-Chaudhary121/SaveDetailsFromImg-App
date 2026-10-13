@@ -37,4 +37,31 @@ const createShop = async (req: Request, res: Response) => {
         res.status(500).json({ error: "Error in Adding Shop" })
     }
 }
-export {getAllShops , createShop}
+
+const getShopById = async (req : Request , res : Response )=> {
+    try {
+        const id  = Number(req.params.id)
+        if(!Number.isInteger(id) || (id <= 0 || id > 2147483647)){
+            return res.status(400).json({error : "Id is not valid"})
+        }
+        const shopData = await pool.query<Shop>("SELECT * FROM shops WHERE id = $1", [id])
+        if(shopData.rows.length === 0 ){
+            return res.status(404).json({error : "Shop not found"})
+        }
+        res.status(200).json(shopData.rows[0])
+    } catch (error) {
+       console.log("Error in Fetching Single Shop : ", error) 
+       res.status(500).json({error : "Error in Fetching Single Shop Data"})
+    }
+}
+
+const updateShop = async (req : Request , res: Response) => {
+    try {
+        
+    } catch (error) {
+        console.log("Error in updating Shop Controller : " , error)
+        res
+    }
+}
+
+export {getAllShops , createShop , getShopById}  
