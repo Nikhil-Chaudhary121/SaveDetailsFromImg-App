@@ -1,17 +1,20 @@
 import express , {Request, Response} from "express";
 import { configDotenv } from "dotenv";
+
+import helmet from "helmet";
 import cors from "cors"
+import rateLimit from "express-rate-limit";
+
+import errorHandler from "./middlewares/errorHandler.ts";
 
 import shopRouter from './routes/shops.route.ts'
-import errorHandler from "./middlewares/errorHandler.ts";
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
+import authRouter from './routes/auth.routes.ts'
+
+
 configDotenv()
 
 const app = express()
 const PORT : number = Number(process.env.PORT) || 5000 ;
-
-
 
 
 //before middlewares
@@ -28,6 +31,7 @@ app.get('/' , (req : Request , res: Response )=> {
 
 //routes
 app.use('/shops' , shopRouter)
+app.use('/auth' , authRouter )
 
 app.use(errorHandler)// try catch
 
