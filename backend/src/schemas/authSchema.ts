@@ -8,6 +8,14 @@ const authSchema = z.object({
 
 export default authSchema
 
+export const loginSchema = z.object({
+    username : z.string().toLowerCase().trim(),
+    password : z.string()
+    
+})
+
+
+
 
 export type CreateAuthInput = z.infer<typeof authSchema>
 
