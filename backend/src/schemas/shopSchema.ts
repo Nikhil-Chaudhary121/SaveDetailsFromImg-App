@@ -9,7 +9,7 @@ const shopSchema = z.object({
 
 })
 
-const numberSchema = z.string().trim().regex([6-9]\d{9}$),
+const numberSchema = z.string().trim()
 
 export default shopSchema
 
