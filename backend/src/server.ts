@@ -9,6 +9,7 @@ import errorHandler from "./middlewares/errorHandler.ts";
 
 import shopRouter from './routes/shops.route.ts'
 import authRouter from './routes/auth.routes.ts'
+import auth from "./middlewares/auth.ts";
 
 
 configDotenv()
@@ -30,7 +31,7 @@ app.get('/' , (req : Request , res: Response )=> {
 })
 
 //routes
-app.use('/shops' , shopRouter)
+app.use('/shops' ,auth, shopRouter)
 app.use('/auth' , authRouter )
 
 app.use(errorHandler)// try catch

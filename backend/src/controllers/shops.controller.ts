@@ -14,6 +14,7 @@ const checkValidNumber = (num : number): boolean => {
 
 const getAllShops = async(req : Request , res : Response) => {
         const result  = (await pool.query<Shop>("SELECT * FROM public.shops;")).rows 
+        console.log(req.userId)
         // console.log("Current database :", result);
     res.status(200).json(result) 
 }

@@ -2,31 +2,35 @@ import { Request ,Response ,NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 
-const auth = async(req : Request , res : Response , next : NextFunction) => {
-try {
-        const headers = req.headers.authorization;
-    const secret = process.env.JWT_SECRET;
 
-    
-    if(!headers?.startsWith("Bearer ")){
-        return res.status(401).json({error : "Header is missing"})
-    }
-    
+const auth = (req : Request , res : Response , next : NextFunction) => {
+    const secret = process.env.JWT_SECRET;
     if(!secret){
         throw new Error("JWT_SECRET is not set")
     }
+    try {
+        const headers = req.headers.authorization;
+    
+        if(!headers?.startsWith("Bearer ")){
+        return res.status(401).json({error : "Header is missing"})
+        }
 
-    if(!headers.split(" ")[1]){
-        return res.status(401).json({error : "Token is missing "})
+        const token = headers.split(" ")[1]
+    
+        if(!token){
+            return res.status(401).json({error : "Token is missing "})
+        }
+        const decoded = jwt.verify(token , secret);
+
+        if (typeof decoded === "string" || typeof decoded.id !== "number") {
+            return res.status(401).json({ error: "Invalid token payload" })
+        }
+        req.userId  = decoded.id
+            
+    } catch (error) {
+        return res.status(401).json({ error: "Invalid or expired token" })
     }
-
-    const token = jwt.verify(headers.split(" ")[1] , secret);
-    
-    
-} catch (error) {
-    console.log("Error in auth middleware : ", error)
-}finally{
     next()
-}
-
 } 
+
+export default auth
