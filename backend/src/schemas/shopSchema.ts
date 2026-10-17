@@ -6,7 +6,10 @@ const shopSchema = z.object({
     latitude : z.number().min(-90).max(90),
     longitude: z.number().min(-180).max(180),
     photo_url : z.string().optional()
+
 })
+
+const numberSchema = z.string().trim().regex([6-9]\d{9}$),
 
 export default shopSchema
 
