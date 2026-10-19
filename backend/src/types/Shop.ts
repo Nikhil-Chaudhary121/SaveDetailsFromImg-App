@@ -5,5 +5,7 @@ export default interface Shop {
     latitude : number ,
     longitude : number ,
     photo_url : string | null ,
+    phone : string[],
+    user_id : number,
     created_at : Date
 }

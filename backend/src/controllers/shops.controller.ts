@@ -13,23 +13,27 @@ const checkValidNumber = (num : number): boolean => {
 
 
 const getAllShops = async(req : Request , res : Response) => {
-        const result  = (await pool.query<Shop>("SELECT * FROM public.shops;")).rows 
+         const result  = (await pool.query<Shop>("SELECT * FROM public.shops;")).rows 
         console.log(req.userId)
-        // console.log("Current database :", result);
+        // console.log("Cu.transform((phones) => [...new Set(phones)])rent database :", result);
     res.status(200).json(result) 
 }
 
 const createShop = async (req: Request, res: Response) => {
     const parsed = shopSchema.safeParse(req.body)
+    if(!(typeof req.userId === 'number')){
+        return res.status(401).json({error : "Your are not allowed to access this route"})
+    }
+
     if (!parsed.success) {
         return res.status(400).json({ error: "Invalid Inputs" })
     }
-    const { name, category, latitude, longitude, photo_url } = parsed.data
+    const { name, category, latitude, longitude, photo_url, phones } = parsed.data
     const result = await pool.query<Shop>(
-        `INSERT INTO shops (name, category, latitude, longitude, photo_url)
-         VALUES ($1, $2, $3, $4, $5)
+        `INSERT INTO shops (name, category, latitude, longitude, photo_url , phones , user_id)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
          RETURNING *`,
-        [name, category ?? null, latitude, longitude, photo_url ?? null]
+        [name, category ?? null, latitude, longitude, photo_url ?? null , phones  , req.userId]
     )
         res.status(201).json(result.rows[0])
 }
